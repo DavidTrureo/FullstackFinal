@@ -39,10 +39,13 @@ export default function OrderSummary() {
 
       {/* Contenido principal */}
       <main className="container py-5">
-        {/* Alerta visual de éxito */}
-        <div className="alert alert-success text-center mb-4" role="alert">
-          <strong>¡Tu pedido ha sido procesado con éxito!</strong>  
-          Número de Orden: #{orderId}
+        {/* Alerta visual de éxito con ícono */}
+        <div className="alert alert-success text-center mb-4 d-flex align-items-center justify-content-center" role="alert">
+          <i className="bi bi-check-circle-fill me-2" style={{ fontSize: "1.5rem" }}></i>
+          <span>
+            <strong>¡Tu pedido ha sido procesado con éxito!</strong>  
+            &nbsp;Número de Orden: #{orderId}
+          </span>
         </div>
 
         <div className="card shadow-lg">
