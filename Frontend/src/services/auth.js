@@ -36,7 +36,7 @@ export async function registerUser({ name, email, tel, password }) {
   const users = loadUsers();
 
   // Verifico si el correo ya existe en la lista de usuarios.
-  const exists = users.some((u) => u.email.toLowerCase() === email.toLowerCase());
+  const exists = users.some((u) => (u.email || "").toLowerCase() === (email || "").toLowerCase());
   if (exists) {
     const err = new Error("El correo ya está registrado.");
     err.code = "EMAIL_TAKEN";
@@ -44,6 +44,12 @@ export async function registerUser({ name, email, tel, password }) {
   }
 
   // Genero el hash de la contraseña para no guardarla en texto plano.
+  if (!password) {
+    const err = new Error("La contraseña es requerida.");
+    err.code = "NO_PASSWORD";
+    throw err;
+  }
+
   const passwordHash = await sha256(password);
 
   // Creo el nuevo usuario con un ID único y fecha de creación.
@@ -72,7 +78,7 @@ export async function loginUser({ email, password }) {
   const users = loadUsers();
 
   // Busco el usuario por correo.
-  const user = users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+  const user = users.find((u) => (u.email || "").toLowerCase() === (email || "").toLowerCase());
   if (!user) {
     const err = new Error("Correo o contraseña inválidos.");
     err.code = "INVALID_CREDENTIALS";

@@ -22,6 +22,7 @@ import ReactDOM from 'react-dom/client'
 
 // Importo el componente raíz de mi aplicación, App.jsx
 import App from './App.jsx'
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Aquí es donde realmente monto mi aplicación en el navegador.
 // ReactDOM.createRoot busca el elemento con id="root" en index.html
@@ -29,7 +30,9 @@ import App from './App.jsx'
 ReactDOM.createRoot(document.getElementById('root')).render(
   // React.StrictMode es una herramienta de desarrollo que me ayuda a detectar problemas potenciales
   <React.StrictMode>
-    {/* App es el componente principal que contiene toda mi aplicación */}
-    <App />
+    <ErrorBoundary>
+      {/* App es el componente principal que contiene toda mi aplicación */}
+      <App />
+    </ErrorBoundary>
   </React.StrictMode>,
 )

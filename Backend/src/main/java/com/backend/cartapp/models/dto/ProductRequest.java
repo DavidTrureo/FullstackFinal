@@ -3,14 +3,15 @@ package com.backend.cartapp.models.dto;
 public class ProductRequest {
     private String name;
     private String description;
-    private Long price;
+    private Double price;
 
-    public String getName(){return name;}
-    public void setName(String n){this.name=n;}
+    // Getters y setters
+    public String getName(){ return name; }
+    public void setName(String n){ this.name = n; }
 
-    public String getDescription(){return description;}
-    public void setDescription(String d){this.description=d;}
+    public String getDescription(){ return description; }
+    public void setDescription(String d){ this.description = d; }
 
-    public Long getPrice(){return price;}
-    public void setPrice(Long p){this.price=p;}
+    public Double getPrice(){ return price; }
+    public void setPrice(Double p){ this.price = p; }
 }

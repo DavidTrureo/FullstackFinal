@@ -4,7 +4,7 @@
 // Importo useAuth para acceder a la función register desde el contexto de autenticación.
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../context/authContext";
+import { useAuth } from "../hooks/useAuth";
 
 // Defino el componente Register
 export default function Register() {
@@ -35,6 +35,21 @@ export default function Register() {
     }
 
     try {
+      // DEBUG: mostramos el objeto que vamos a enviar al contexto
+      try {
+        console.log(
+          "[DEBUG] Register onSubmit - form:",
+          JSON.stringify({
+            name: form.name,
+            email: form.email,
+            tel: form.tel,
+            password: form.password ? "<redacted>" : undefined,
+          })
+        );
+      } catch (e) {
+        console.log("[DEBUG] Register onSubmit - form (could not stringify)", { name: form.name, email: form.email, tel: form.tel });
+      }
+
       // Intento registrar al usuario con los datos del formulario
       await register({
         name: form.name.trim(),
@@ -46,8 +61,13 @@ export default function Register() {
       // Si funciona, redirijo al perfil
       navigate("/profile", { replace: true });
     } catch (err) {
-      // Si falla, muestro un mensaje de error
-      setError(err?.message || "Error al registrar.");
+      // Si falla, muestro un mensaje de error más amigable según el tipo
+      console.error("[Register] register error:", err);
+      if (err?.code === "EMAIL_TAKEN") {
+        setError("El correo ya está registrado. ¿Quieres iniciar sesión?");
+      } else {
+        setError(err?.message || "Error al registrar.");
+      }
     }
   };
 

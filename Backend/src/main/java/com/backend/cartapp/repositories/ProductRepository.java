@@ -1,8 +1,7 @@
 package com.backend.cartapp.repositories;
 
-import org.springframework.data.repository.CrudRepository;
 import com.backend.cartapp.models.entities.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ProductRepository extends CrudRepository<Product, Long> {
-    
+public interface ProductRepository extends JpaRepository<Product, Long> {
 }

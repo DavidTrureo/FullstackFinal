@@ -1,13 +1,9 @@
 package com.backend.cartapp.models.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table(name="products")
+@Table(name = "products")
 public class Product {
 
     @Id
@@ -18,39 +14,18 @@ public class Product {
 
     private String description;
 
-    private Long price;
+    private Double price;
 
-    public Long getId() {
-        return id;
-    }
+    // Getters y setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getName() {
-        return name;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Long getPrice() {
-        return price;
-    }
-
-    public void setPrice(Long price) {
-        this.price = price;
-    }
-    
-    
+    public Double getPrice() { return price; }
+    public void setPrice(Double price) { this.price = price; }
 }

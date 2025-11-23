@@ -1,5 +1,7 @@
 // Importo el componente ProductCard, que representa cada tarjeta de producto
 import ProductCard from "../components/ProductCard";
+import { apiFetch } from "../services/api";
+import { useEffect, useState } from "react";
 
 // Importo las imágenes de los productos desde la carpeta /imagenes
 import pc_Gamer from "../imagenes/pc_gamer.webp";
@@ -59,6 +61,28 @@ const PRODUCTS = [
 // Defino el componente Products, que renderiza la página de productos
 // Recibe la función onAdd como prop, para manejar la acción de añadir al carrito
 export default function Products({ onAdd }) {
+  const [items, setItems] = useState(PRODUCTS);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    async function load() {
+      setLoading(true);
+      // Intenta cargar desde backend (ruta ejemplo: /products)
+      const res = await apiFetch("/products");
+      if (!mounted) return;
+      if (res.ok && Array.isArray(res.data) && res.data.length) {
+        setItems(res.data);
+      } else {
+        // Si falla, dejamos los PRODUCTS locales como fallback
+        console.warn("No se pudo cargar productos desde backend, usando datos locales:", res.error || res);
+      }
+      if (mounted) setLoading(false);
+    }
+    load();
+    return () => (mounted = false);
+  }, []);
+
   return (
     <>
       {/* Encabezado de la página con título y subtítulo */}
@@ -71,16 +95,17 @@ export default function Products({ onAdd }) {
 
       {/* Contenido principal: renderizo las tarjetas de productos */}
       <main className="container py-5">
+        {loading ? <p className="text-center">Cargando productos…</p> : null}
         <div className="row">
-          {PRODUCTS.map((p) => (
+          {items.map((p) => (
             <ProductCard
-              key={p.sku}              // Uso el SKU como clave única
-              image={p.image}          // Imagen del producto
-              title={p.title}          // Título del producto
-              description={p.description} // Descripción breve
-              price={p.price}          // Precio en CLP
-              color={p.color}          // Color (si está definido)
-              onAdd={() => onAdd?.(p)} // Al hacer click en "Añadir", paso el producto completo
+              key={p.sku}
+              image={p.image}
+              title={p.title}
+              description={p.description}
+              price={p.price}
+              color={p.color}
+              onAdd={() => onAdd?.(p)}
             />
           ))}
         </div>

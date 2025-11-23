@@ -1,7 +1,6 @@
 package com.backend.cartapp.controllers;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.*;
@@ -11,18 +10,19 @@ import com.backend.cartapp.models.entities.Product;
 import com.backend.cartapp.models.dto.ProductRequest;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
+@RequestMapping("/api/products")
+@CrossOrigin(origins = "http://localhost:5173") // Ajusta si tu frontend corre en otro puerto
 public class ProductController {
 
     @Autowired
     private ProductService service;
 
-    @GetMapping("/products")
+    @GetMapping
     public List<Product> list() {
         return service.findAll();
     }
 
-    @PostMapping("/products")
+    @PostMapping
     public ResponseEntity<?> create(@RequestBody ProductRequest request){
         try{
             Product p = new Product();

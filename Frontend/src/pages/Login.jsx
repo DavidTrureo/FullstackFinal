@@ -4,7 +4,7 @@
 // Importo useAuth para acceder a la función de login desde el contexto de autenticación.
 import { useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { useAuth } from "../context/authContext";
+import { useAuth } from "../hooks/useAuth";
 
 // Defino el componente Login
 export default function Login() {

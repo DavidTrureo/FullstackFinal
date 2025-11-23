@@ -1,7 +1,7 @@
 // Importo useState para manejar estados locales.
 // Importo useAuth para acceder al usuario y a la función updateProfile desde el contexto de autenticación.
 import { useState } from "react";
-import { useAuth } from "../context/authContext";
+import { useAuth } from "../hooks/useAuth";
 
 // Defino el componente Profile
 export default function Profile() {

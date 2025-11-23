@@ -2,10 +2,11 @@
 // - Link: para enlaces simples sin recargar la página.
 // - NavLink: igual que Link, pero además me permite aplicar estilos activos cuando la ruta coincide.
 import { NavLink, Link } from 'react-router-dom';
-import { useAuth } from '../context/authContext'; // ← Importa tu contexto de autenticación
+import { useAuth } from "../hooks/useAuth";
 
 export default function Navbar({ cartCount = 0 }) {
   // Obtengo los datos del contexto
+  console.log("[Navbar] render");
   const { user, isAuthenticated, logout } = useAuth();
 
   return (

@@ -1,32 +1,35 @@
-// Importo useLocation y Link desde react-router-dom.
-// - useLocation: me permite acceder al estado que se pasó al navegar desde el checkout.
-// - Link: me permite crear enlaces internos sin recargar la página.
 import { useLocation, Link } from "react-router-dom";
 
-// Función auxiliar para formatear números como moneda chilena (CLP).
+// Formateo moneda chilena
 const formatCLP = (n) =>
   (Number(n) || 0).toLocaleString("es-CL", { style: "currency", currency: "CLP" });
 
-// Defino el componente OrderSummary.
-// Aquí muestro el resumen final de la compra después del checkout.
+// Formateo fecha chilena
+const formatFecha = (isoDate) =>
+  new Date(isoDate).toLocaleString("es-CL", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+
 export default function OrderSummary() {
-  // Obtengo el estado enviado desde el checkout (los ítems del carrito).
   const { state } = useLocation();
   const items = state?.items ?? [];
+  const orderId = state?.id ?? "—";
+  const createdAt = state?.createdAt;
 
-  // Calculo el total sumando los precios de todos los ítems.
+  // Calcular total considerando cantidad
   const total = items.reduce(
     (acc, it) =>
       acc +
       (typeof it.price === "number"
-        ? it.price
-        : Number(String(it.price).replace(/[^\d]/g, "")) || 0),
+        ? it.price * (it.quantity || 1)
+        : Number(String(it.price).replace(/[^\d]/g, "")) * (it.quantity || 1) || 0),
     0
   );
 
   return (
     <>
-      {/* Encabezado de confirmación de compra */}
+      {/* Encabezado de éxito */}
       <header className="bg-success text-white text-center py-5 mt-5">
         <div className="container pt-5">
           <h1 className="display-4">¡Compra Finalizada!</h1>
@@ -34,38 +37,55 @@ export default function OrderSummary() {
         </div>
       </header>
 
-      {/* Contenido principal: tarjeta con resumen del pedido */}
+      {/* Contenido principal */}
       <main className="container py-5">
+        {/* Alerta visual de éxito */}
+        <div className="alert alert-success text-center mb-4" role="alert">
+          <strong>¡Tu pedido ha sido procesado con éxito!</strong>  
+          Número de Orden: #{orderId}
+        </div>
+
         <div className="card shadow-lg">
           <div className="card-body">
             <h4 className="card-title mb-4">Resumen del Pedido</h4>
-            
-            {/* Listado de productos comprados */}
+
+            {/* Info de orden */}
+            <div className="mb-3">
+              <p><strong>Número de Orden:</strong> #{orderId}</p>
+              {createdAt && <p><strong>Fecha:</strong> {formatFecha(createdAt)}</p>}
+            </div>
+
+            {/* Lista de productos */}
             <div className="mb-4">
               {items.length === 0 ? (
                 <p>No se encontraron ítems del pedido.</p>
               ) : (
                 <ul className="list-group">
-                  {items.map((it) => (
+                  {items.map((it, idx) => (
                     <li
-                      key={it.sku}
+                      key={idx}
                       className="list-group-item d-flex justify-content-between align-items-center"
                     >
-                      <span>{it.title}</span>
-                      <strong>{formatCLP(it.price)}</strong>
+                      <span>
+                        {it.productName}{" "}
+                        {it.quantity > 1 && (
+                          <small className="text-muted">x{it.quantity}</small>
+                        )}
+                      </span>
+                      <strong>{formatCLP(it.price * (it.quantity || 1))}</strong>
                     </li>
                   ))}
                 </ul>
               )}
             </div>
 
-            {/* Total del pedido */}
+            {/* Total */}
             <div className="d-flex justify-content-between align-items-center mb-4 border-top pt-3">
               <h5>Total del Pedido:</h5>
               <h5 className="text-success">{formatCLP(total)}</h5>
             </div>
 
-            {/* Botón para volver a la página principal */}
+            {/* Botón volver */}
             <Link to="/" className="btn btn-primary w-100">
               Volver a la página principal
             </Link>
