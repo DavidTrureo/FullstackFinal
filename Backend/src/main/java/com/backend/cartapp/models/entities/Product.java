@@ -1,7 +1,6 @@
 package com.backend.cartapp.models.entities;
 
 import jakarta.persistence.*;
-
 @Entity
 @Table(name = "products")
 public class Product {
@@ -11,10 +10,11 @@ public class Product {
     private Long id;
 
     private String name;
-
     private String description;
-
     private Double price;
+
+    private String image; // Ruta de imagen (ej: /imagenes/teclado_gamer.webp)
+    private String color;
 
     // Getters y setters
     public Long getId() { return id; }
@@ -28,4 +28,10 @@ public class Product {
 
     public Double getPrice() { return price; }
     public void setPrice(Double price) { this.price = price; }
+
+    public String getImage() { return image; }
+    public void setImage(String image) { this.image = image; }
+
+    public String getColor() { return color; }
+    public void setColor(String color) { this.color = color; }
 }
