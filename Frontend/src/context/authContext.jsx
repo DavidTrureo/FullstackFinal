@@ -12,7 +12,7 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => apiGetCurrentUser());
-  const [token, setToken] = useState(() => localStorage.getItem("token"));
+  const [token, setToken] = useState(() => sessionStorage.getItem("token"));
 
   // Configurar token en las peticiones cada vez que cambie
   useEffect(() => {
@@ -35,10 +35,10 @@ export function AuthProvider({ children }) {
         setUser(remoteUser || null);
         if (payload.token) {
           setToken(payload.token);
-          localStorage.setItem("token", payload.token);
+          sessionStorage.setItem("token", payload.token);
         } else {
           setToken(null);
-          localStorage.removeItem("token");
+          sessionStorage.removeItem("token");
         }
         return remoteUser;
       }
@@ -54,7 +54,7 @@ export function AuthProvider({ children }) {
       if (userData) {
         setUser(userData);
         setToken(null);
-        localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
       }
       return userData;
     }

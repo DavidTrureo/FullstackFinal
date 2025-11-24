@@ -8,7 +8,7 @@ const CURRENT_KEY = "lug_current_user";
 // Si no hay nada guardado, retorna un arreglo vacío.
 const loadUsers = () => {
   try {
-    return JSON.parse(localStorage.getItem(USERS_KEY)) ?? [];
+    return JSON.parse(sessionStorage.getItem(USERS_KEY)) ?? [];
   } catch {
     return [];
   }
@@ -16,7 +16,7 @@ const loadUsers = () => {
 
 // Función auxiliar para guardar la lista de usuarios en localStorage.
 const saveUsers = (users) => {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  sessionStorage.setItem(USERS_KEY, JSON.stringify(users));
 };
 
 // Función para generar un hash SHA-256 de un texto (como la contraseña).
@@ -67,7 +67,7 @@ export async function registerUser({ name, email, tel, password }) {
   saveUsers(users);
 
   // Al registrar, automáticamente lo considero logueado.
-  localStorage.setItem(CURRENT_KEY, JSON.stringify({ id: newUser.id, email, name, tel }));
+  sessionStorage.setItem(CURRENT_KEY, JSON.stringify({ id: newUser.id, email, name, tel }));
 
   // Retorno los datos básicos del usuario.
   return { id: newUser.id, email, name, tel };
@@ -94,7 +94,7 @@ export async function loginUser({ email, password }) {
   }
 
   // Guardo al usuario como el actual en localStorage.
-  localStorage.setItem(CURRENT_KEY, JSON.stringify({ id: user.id, email: user.email, name: user.name, tel: user.tel }));
+  sessionStorage.setItem(CURRENT_KEY, JSON.stringify({ id: user.id, email: user.email, name: user.name, tel: user.tel }));
 
   // Retorno los datos básicos del usuario.
   return { id: user.id, email: user.email, name: user.name, tel: user.tel };
@@ -102,13 +102,13 @@ export async function loginUser({ email, password }) {
 
 // Función para cerrar sesión: simplemente elimino el usuario actual de localStorage.
 export function logoutUser() {
-  localStorage.removeItem(CURRENT_KEY);
+  sessionStorage.removeItem(CURRENT_KEY);
 }
 
 // Función para obtener el usuario actual desde localStorage.
 export function getCurrentUser() {
   try {
-    return JSON.parse(localStorage.getItem(CURRENT_KEY)) || null;
+    return JSON.parse(sessionStorage.getItem(CURRENT_KEY)) || null;
   } catch {
     return null;
   }
@@ -129,7 +129,7 @@ export function updateCurrentUserProfile({ name, tel }) {
 
     // Actualizo también la sesión actual.
     const updated = { ...current, name: users[idx].name, tel: users[idx].tel };
-    localStorage.setItem(CURRENT_KEY, JSON.stringify(updated));
+    sessionStorage.setItem(CURRENT_KEY, JSON.stringify(updated));
     return updated;
   }
 
