@@ -21,12 +21,42 @@ export function AuthProvider({ children }) {
 
   const login = async ({ email, password } = {}) => {
     if (!email || !password) throw new Error("Email y contraseña son requeridos.");
-    // services/auth.loginUser expects a single object { email, password }
-    const userData = await apiLogin({ email, password });
-    if (userData) {
-      setUser(userData);
-      setToken(null);
-      localStorage.removeItem("token");
+
+    // Primero intento autenticar contra el backend remoto
+    try {
+      const res = await apiFetch("/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (res.ok) {
+        const payload = res.data || {};
+        const remoteUser = payload.user || payload;
+        setUser(remoteUser || null);
+        if (payload.token) {
+          setToken(payload.token);
+          localStorage.setItem("token", payload.token);
+        } else {
+          setToken(null);
+          localStorage.removeItem("token");
+        }
+        return remoteUser;
+      }
+
+      // Si backend responde con error, lanzar para caer al fallback local
+      const err = new Error(res.error?.message || res.error || "Error en login remoto.");
+      err.code = res.error?.code || null;
+      throw err;
+    } catch (e) {
+      // Si falla la llamada remota (no disponible, CORS, 401, etc.), hago fallback al login local
+      console.warn("[AuthProvider] login remoto falló, usando login local:", e?.message);
+      const userData = await apiLogin({ email, password });
+      if (userData) {
+        setUser(userData);
+        setToken(null);
+        localStorage.removeItem("token");
+      }
+      return userData;
     }
   };
 
@@ -88,8 +118,41 @@ export function AuthProvider({ children }) {
   };
 
   const updateProfile = async (data) => {
-    const updatedUser = await apiUpdateProfile(data);
-    setUser(updatedUser);
+    // Si hay un backend disponible, intentamos persistir los cambios allí.
+    try {
+      // Necesitamos enviar el email para que el backend encuentre al usuario
+      const payload = { email: user?.email, name: data.name, tel: data.tel };
+      const res = await apiFetch("/auth/profile", { method: "PUT", body: JSON.stringify(payload) });
+      if (res.ok) {
+        // El backend devuelve el usuario completo; normalizamos a los campos que usamos en frontend
+        const rem = res.data || {};
+        const updatedUser = {
+          id: rem.id || user?.id,
+          email: rem.email || user?.email,
+          name: rem.name || data.name,
+          tel: rem.tel || data.tel,
+        };
+        setUser(updatedUser);
+        // Si también mantenemos la sesión en localStorage (modo local), actualizamos allí
+        try {
+          localStorage.setItem("lug_current_user", JSON.stringify(updatedUser));
+        } catch (e) {}
+        return updatedUser;
+      }
+      // Si el endpoint respondió con error, lanzamos para caer al fallback
+      throw new Error(res.error?.message || res.error || "Error updating remote profile");
+    } catch (err) {
+      console.warn("[AuthProvider] updateProfile remote failed, falling back to local:", err?.message);
+      // Fallback: actualizar en localStorage usando la implementación existente
+      try {
+        const updated = apiUpdateProfile(data); // this is the local update function
+        setUser(updated);
+        return updated;
+      } catch (e) {
+        console.error("[AuthProvider] updateProfile fallback failed:", e);
+        throw e;
+      }
+    }
   };
 
   const logout = () => {

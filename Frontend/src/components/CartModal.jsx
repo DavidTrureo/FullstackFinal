@@ -13,6 +13,8 @@ export default function CartModal({
   onIncItem,
   onDecItem,
   onRemoveLine,
+  isOpen = false,
+  onClose = () => {},
 }) {
   // Verifico si el carrito tiene productos
   const hasItems = cartItems.length > 0;
@@ -31,22 +33,29 @@ export default function CartModal({
     0
   );
 
+  // Render modal controlled by React to avoid Bootstrap JS conflicts
   return (
-    // Modal de Bootstrap que se abre al hacer clic en el carrito
-    <div
-      className="modal fade"
-      id="cartModal"
-      tabIndex="-1"
-      aria-labelledby="cartModalLabel"
-      aria-hidden="true"
-    >
-      <div className="modal-dialog modal-lg modal-dialog-scrollable">
-        <div className="modal-content">
+    <>
+      <div
+        className={`modal fade ${isOpen ? 'show' : ''}`}
+        id="cartModal"
+        tabIndex="-1"
+        aria-labelledby="cartModalLabel"
+        aria-hidden={!isOpen}
+        style={isOpen ? { display: 'block' } : { display: 'none' }}
+        onClick={(e) => {
+          // clicking on backdrop area should close (only when click is on the backdrop itself)
+          if (e.target === e.currentTarget) onClose?.();
+        }}
+      >
+        {/* Prevent clicks inside the dialog from bubbling to the backdrop */}
+        <div className="modal-dialog modal-lg modal-dialog-scrollable" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content">
           
           {/* Header del modal */}
-          <div className="modal-header">
+            <div className="modal-header">
             <h5 className="modal-title" id="cartModalLabel">Carrito de Compras</h5>
-            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            <button type="button" className="btn-close" aria-label="Cerrar" onClick={() => onClose?.()}></button>
           </div>
 
           {/* Body del modal: listado de productos */}
@@ -54,30 +63,36 @@ export default function CartModal({
             {hasItems ? (
               <>
                 {cartItems.map((item, idx) => {
-                  const unit = toNumber(item.price);
-                  const qty = item.qty || 1;
+                  // display-friendly fields: support both `title` and `name`
+                  const title = item?.title ?? item?.name ?? "";
+                  const description = item?.description ?? "";
+                  const unit = toNumber(item?.price ?? item?.cost ?? 0);
+                  const qty = item?.qty || 1;
                   const lineTotal = unit * qty;
 
                   return (
                     <div
-                      key={item.id ?? idx}
+                      key={item?.id ?? idx}
                       className="cart-item d-flex align-items-center justify-content-between mb-3"
                     >
                       {/* Parte izquierda: imagen y detalles del producto */}
                       <div className="d-flex align-items-center">
-                        {item.image && (
+                        {item?.image && (
                           <img
                             src={item.image}
-                            alt={item.title}
+                            alt={title}
                             className="cart-item-img me-3"
                           />
                         )}
                         <div>
-                          <h6 className="mb-1">{item.title}</h6>
+                          <h6 className="mb-1">{title}</h6>
+                          {description ? (
+                            <small className="text-muted d-block">{description}</small>
+                          ) : null}
                           <small className="precio-unitario d-block">
                             Precio unitario: {formatCLP(unit)}
                           </small>
-                          {item.color && (
+                          {item?.color && (
                             <div className="product-color-pill mt-1">
                               Color: {item.color}
                             </div>
@@ -92,7 +107,11 @@ export default function CartModal({
                           <button
                             type="button"
                             className="btn btn-sm btn-outline-light"
-                            onClick={() => onDecItem?.(item)}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              onDecItem?.(item);
+                            }}
                             aria-label="Disminuir cantidad"
                           >
                             <i className="bi bi-dash" aria-hidden="true"></i>
@@ -105,7 +124,11 @@ export default function CartModal({
                           <button
                             type="button"
                             className="btn btn-sm btn-outline-light"
-                            onClick={() => onIncItem?.(item)}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              onIncItem?.(item);
+                            }}
                             aria-label="Aumentar cantidad"
                           >
                             <i className="bi bi-plus-lg" aria-hidden="true"></i>
@@ -123,7 +146,11 @@ export default function CartModal({
                         <button
                           type="button"
                           className="btn btn-sm btn-danger"
-                          onClick={() => onRemoveLine?.(item)}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            onRemoveLine?.(item);
+                          }}
                         >
                           Eliminar
                         </button>
@@ -161,15 +188,21 @@ export default function CartModal({
             <button
               type="button"
               className="btn btn-primary"
-              data-bs-dismiss="modal"
-              onClick={onCheckout}
+              onClick={() => {
+                onCheckout?.();
+                onClose?.();
+              }}
               disabled={!hasItems}
             >
               Finalizar compra
             </button>
           </div>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* backdrop rendered by React when open */}
+      {isOpen ? <div className="modal-backdrop fade show"></div> : null}
+    </>
   );
 }

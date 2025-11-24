@@ -2,12 +2,14 @@
 // - Link: para enlaces simples sin recargar la página.
 // - NavLink: igual que Link, pero además me permite aplicar estilos activos cuando la ruta coincide.
 import { NavLink, Link } from 'react-router-dom';
+import { useState } from 'react';
 import { useAuth } from "../hooks/useAuth";
 
-export default function Navbar({ cartCount = 0 }) {
+export default function Navbar({ cartCount = 0, onOpenCart }) {
   // Obtengo los datos del contexto
   console.log("[Navbar] render");
   const { user, isAuthenticated, logout } = useAuth();
+  const [navOpen, setNavOpen] = useState(false);
 
   return (
     // Uso clases de Bootstrap para crear una barra de navegación fija, oscura y expandible.
@@ -17,26 +19,26 @@ export default function Navbar({ cartCount = 0 }) {
         {/* Logo o marca de la aplicación, que redirige al inicio */}
         <Link className="navbar-brand" to="/">Level-Up Gamer</Link>
 
-        {/* Botón hamburguesa para colapsar el menú en pantallas pequeñas */}
-        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
-          aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+        {/* Botón hamburguesa (controlado por React) */}
+        <button className="navbar-toggler" type="button" onClick={() => setNavOpen(v => !v)}
+          aria-controls="navMenu" aria-expanded={navOpen} aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
         </button>
 
         {/* Contenedor del menú colapsable */}
-        <div className="collapse navbar-collapse" id="navMenu">
+        <div className={`collapse navbar-collapse ${navOpen ? 'show' : ''}`} id="navMenu">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             {/* Enlace a Inicio */}
             <li className="nav-item">
-              <NavLink to="/" end className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Inicio</NavLink>
+              <NavLink to="/" end className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={() => setNavOpen(false)}>Inicio</NavLink>
             </li>
             {/* Enlace a Productos */}
             <li className="nav-item">
-              <NavLink to="/productos" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Productos</NavLink>
+              <NavLink to="/productos" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={() => setNavOpen(false)}>Productos</NavLink>
             </li>
             {/* Enlace a Contacto */}
             <li className="nav-item">
-              <NavLink to="/contacto" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Contacto</NavLink>
+              <NavLink to="/contacto" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={() => setNavOpen(false)}>Contacto</NavLink>
             </li>
           </ul>
 
@@ -45,13 +47,13 @@ export default function Navbar({ cartCount = 0 }) {
             {/* Si el usuario NO está autenticado, muestro botones de Login y Registro */}
             {!isAuthenticated ? (
               <div id="auth-buttons" className="d-flex gap-2">
-                <NavLink to="/login" className="btn btn-outline-light">Login</NavLink>
-                <NavLink to="/register" className="btn btn-primary">Registrarse</NavLink>
+                <NavLink to="/login" className="btn btn-outline-light" onClick={() => setNavOpen(false)}>Login</NavLink>
+                <NavLink to="/register" className="btn btn-primary" onClick={() => setNavOpen(false)}>Registrarse</NavLink>
               </div>
             ) : (
               // Si el usuario SÍ está autenticado, muestro su nombre y el botón de Cerrar sesión
               <>
-                <NavLink to="/profile" className="btn btn-primary" id="account-button">
+                <NavLink to="/profile" className="btn btn-primary" id="account-button" onClick={() => setNavOpen(false)}>
                   {user?.name || "Cuenta"}
                 </NavLink>
                 <button className="btn btn-outline-light" type="button" onClick={logout}>
@@ -61,8 +63,8 @@ export default function Navbar({ cartCount = 0 }) {
             )}
 
             {/* Botón del carrito con contador dinámico */}
-            <button className="btn btn-outline-light position-relative" id="btnCart" aria-label="Ver carrito"
-              data-bs-toggle="modal" data-bs-target="#cartModal" type="button">
+            <button type="button" className="btn btn-outline-light position-relative" id="btnCart" aria-label="Ver carrito"
+              onClick={() => onOpenCart?.()}>
               🛒 Carrito
               {/* Badge que muestra la cantidad total de productos en el carrito */}
               <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary" id="cart-count">

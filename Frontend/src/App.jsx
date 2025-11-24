@@ -39,7 +39,17 @@ export default function App() {
           i === idx ? { ...p, qty: (p.qty || 1) + 1 } : p
         );
       }
-      return [...prev, { ...item, id, qty: 1 }];
+      // Normalize common fields so cart items always have `title`, `price`, `image`, etc.
+      const normalized = {
+        ...item,
+        id,
+        qty: 1,
+        title: item.title ?? item.name ?? "",
+        price: item.price ?? item.cost ?? 0,
+        image: item.image ?? item.img ?? null,
+        description: item.description ?? item.desc ?? "",
+      };
+      return [...prev, normalized];
     });
   };
 
@@ -75,9 +85,16 @@ export default function App() {
     const navigate = useNavigate();
     const checkout = () => navigate("/checkout");
 
+    const [isCartOpen, setIsCartOpen] = useState(false);
+    const openCart = () => setIsCartOpen(true);
+    const closeCart = () => setIsCartOpen(false);
+
+    // Nota: el listener global que prevenía submits accidentales fue removido.
+    // Se confía ahora en que los botones en JSX declaren `type` correctamente.
+
     return (
       <>
-        <Navbar cartCount={cartCount} isAuthenticated={isAuthenticated} onLogout={logout} />
+        <Navbar cartCount={cartCount} isAuthenticated={isAuthenticated} onLogout={logout} onOpenCart={openCart} />
 
         <div style={{ paddingTop: "4.5rem" }}>
           <AppRoutes
@@ -96,6 +113,8 @@ export default function App() {
           onIncItem={incItem}
           onDecItem={decItem}
           onRemoveLine={removeLine}
+          isOpen={isCartOpen}
+          onClose={closeCart}
         />
       </>
     );

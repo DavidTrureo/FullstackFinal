@@ -47,7 +47,7 @@ export default function Profile() {
                 <p><strong>Teléfono:</strong> <span>{user?.tel}</span></p>
                 <div className="d-flex justify-content-center mt-4 gap-2">
                   {/* Botón para pasar al modo edición */}
-                  <button className="btn btn-warning" onClick={() => setEditing(true)}>Editar perfil</button>
+                  <button type="button" className="btn btn-warning" onClick={() => setEditing(true)}>Editar perfil</button>
                 </div>
               </>
             ) : (

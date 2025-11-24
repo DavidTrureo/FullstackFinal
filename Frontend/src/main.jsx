@@ -1,8 +1,7 @@
 // Importo los estilos principales de Bootstrap para tener un diseño base moderno y responsivo
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-// Importo también el bundle de JavaScript de Bootstrap, que incluye componentes interactivos como modales o dropdowns
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+// Nota: eliminada la importación del bundle JS de Bootstrap para que
+// React controle completamente componentes interactivos (modales, backdrops, etc.).
 
 // Importo la librería animate.css para poder usar animaciones predefinidas en mis componentes
 import 'animate.css';
