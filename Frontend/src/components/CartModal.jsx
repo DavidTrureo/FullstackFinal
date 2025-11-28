@@ -19,6 +19,15 @@ export default function CartModal({
   // Verifico si el carrito tiene productos
   const hasItems = cartItems.length > 0;
 
+  // Paleta de colores para los items del carrito.
+  // Usamos los nombres de las variables CSS que definimos.
+  const itemColors = [
+    "var(--primary)",
+    "var(--secondary)",
+    "var(--accent-green)",
+    "var(--accent-orange)",
+    "var(--accent-red)",
+  ];
   // Función auxiliar: convierte un precio a número
   const toNumber = (p) =>
     typeof p === "number" ? p : Number(String(p).replace(/[^\d]/g, "") || 0);
@@ -73,7 +82,11 @@ export default function CartModal({
                   return (
                     <div
                       key={item?.id ?? idx}
-                      className="cart-item d-flex align-items-center justify-content-between mb-3"
+                      className="cart-item d-flex align-items-center justify-content-between"
+                      // Aplicamos el color correspondiente de forma cíclica
+                      style={{
+                        "--item-accent-color": itemColors[idx % itemColors.length],
+                      }}
                     >
                       {/* Parte izquierda: imagen y detalles del producto */}
                       <div className="d-flex align-items-center">
@@ -87,7 +100,7 @@ export default function CartModal({
                         <div>
                           <h6 className="mb-1">{title}</h6>
                           {description ? (
-                            <small className="text-muted d-block">{description}</small>
+                            <small className="cart-item-description d-block">{description}</small>
                           ) : null}
                           <small className="precio-unitario d-block">
                             Precio unitario: {formatCLP(unit)}

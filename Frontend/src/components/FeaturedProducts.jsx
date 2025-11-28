@@ -1,15 +1,20 @@
 import { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
 import { apiFetch } from "../services/api";
+import { useCart } from "../hooks/useCart"; // 1. Importar el hook
 
-export default function FeaturedProducts({ onAdd }) {
+export default function FeaturedProducts() { // 2. Eliminar la prop onAdd
   const [featured, setFeatured] = useState([]);
+  const { addItem } = useCart(); // 3. Obtener addItem desde el contexto
 
   useEffect(() => {
     async function load() {
       const res = await apiFetch("/products");
-      if (res.ok && Array.isArray(res.data)) {
-        setFeatured(res.data.slice(0, 3)); // o aleatorios si prefieres
+      // Aseguramos que res.data sea un array antes de usarlo.
+      // Si no lo es, usamos un array vacío para evitar errores.
+      const products = Array.isArray(res.data) ? res.data : [];
+      if (res.ok) {
+        setFeatured(products.slice(0, 3)); // Cortamos los primeros 3 productos
       } else {
         console.error("No se pudieron cargar productos destacados:", res.error || res);
       }
@@ -32,7 +37,7 @@ export default function FeaturedProducts({ onAdd }) {
             description={p.description}
             price={p.price}
             color={p.color}
-            onAdd={() => onAdd?.(p)}
+            onAdd={() => addItem(p)} // 4. Usar la función del contexto directamente
           />
         ))}
       </div>

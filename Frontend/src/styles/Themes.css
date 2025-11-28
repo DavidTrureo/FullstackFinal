@@ -8,6 +8,9 @@
   --bg-grad-1: #1e1b4b; /* Azul oscuro violeta */
   --bg-grad-2: #312e81; /* Azul/violeta más claro */
   --card-bg: #111827;   /* gris oscuro de las tarjetas */
+  --accent-green: #10b981; /* Verde esmeralda */
+  --accent-red: #ef4444;   /* Rojo vibrante */
+  --accent-orange: #f97316; /* Naranja intenso */
   --form-bg: #1f2937;   /* gris oscuro de los inputs */
 }
 
@@ -127,9 +130,15 @@ section h2, .card-title {
 
 /* Nuevos estilos para el diseño del carrito */
 .cart-item {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  /* Usaremos una variable para el color del borde, que se establecerá desde React */
+  border-left: 4px solid var(--item-accent-color, var(--primary));
+  padding-left: 1rem;
   padding-bottom: 1rem;
   margin-bottom: 1rem !important;
+  transition: background-color 0.2s ease;
+}
+.cart-item:hover {
+  background-color: rgba(255, 255, 255, 0.03);
 }
 .cart-item-img {
   width: 80px;
@@ -156,4 +165,12 @@ section h2, .card-title {
   color: var(--muted) !important;
 }
 
+/* Estilo para la descripción en el modal del carrito */
+.cart-item-description {
+  color: var(--muted); /* Usamos el color 'muted' que es más tenue */
+}
 
+/* Hace que el texto 'muted' dentro del carrito sea más claro */
+.cart-item .text-muted {
+  color: var(--text) !important; /* Usamos !important para asegurar que sobrescriba a Bootstrap */
+}

@@ -4,17 +4,15 @@ import { useState } from "react";
 // Defino el componente Contacto
 export default function Contacto() {
   // Estado inicial del formulario con tres campos: nombre, email y mensaje
-  const [form, setForm] = useState({ nombre: "", email: "", mensaje: "" });
+  const [form, setForm] = useState({ "contact-nombre": "", "contact-email": "", "contact-comentarios": "" });
 
   // Función para manejar cambios en los inputs
   // Extrae el id y el valor del input que cambió y actualiza el estado
   const onChange = (e) => {
-    const { id, value } = e.target;
-    setForm((f) => ({ ...f, [id]: value }));
+    setForm((f) => ({ ...f, [e.target.id]: e.target.value }));
   };
 
   // Función para manejar el envío del formulario
-  // Previene el comportamiento por defecto y simula un envío con un alert
   const onSubmit = (e) => {
     e.preventDefault();
     // Validación básica y simulación de envío
@@ -40,23 +38,23 @@ export default function Contacto() {
             <div className="col-md-6">
               <label htmlFor="contact-nombre" className="form-label">Nombre</label>
               <input
-                id="contact-nombre"
+                id="contact-nombre" // El id debe coincidir con la clave en el estado
                 className="form-control"
                 value={form["contact-nombre"]}
-                onChange={(e) => setForm({ ...form, ["contact-nombre"]: e.target.value })}
+                onChange={onChange}
                 required
               />
             </div>
 
             {/* Campo de correo electrónico */}
             <div className="col-md-6">
-              <label htmlFor="contact-email" className="form-label">Correo</label>
+              <label htmlFor="contact-email" className="form-label">Correo Electrónico</label>
               <input
                 id="contact-email"
                 type="email"
                 className="form-control"
                 value={form["contact-email"]}
-                onChange={(e) => setForm({ ...form, ["contact-email"]: e.target.value })}
+                onChange={onChange}
                 required
               />
             </div>
@@ -69,7 +67,7 @@ export default function Contacto() {
                 className="form-control"
                 rows="5"
                 value={form["contact-comentarios"]}
-                onChange={(e) => setForm({ ...form, ["contact-comentarios"]: e.target.value })}
+                onChange={onChange}
                 required
               />
             </div>

@@ -15,10 +15,10 @@ export default function Profile() {
   const [form, setForm] = useState({ name: user?.name ?? "", tel: user?.tel ?? "" });
 
   // Función que se ejecuta al enviar el formulario
-  const onSubmit = (e) => {
-    e.preventDefault(); // Evito recargar la página
+  const onSubmit = async (e) => {
+    e.preventDefault(); // Evito recargar la página y el "salto"
     // Actualizo el perfil con los datos del formulario (limpiando espacios con trim)
-    updateProfile({ name: form.name.trim(), tel: form.tel.trim() });
+    await updateProfile({ name: form.name.trim(), tel: form.tel.trim() });
     // Salgo del modo edición y vuelvo a la vista normal
     setEditing(false);
   };

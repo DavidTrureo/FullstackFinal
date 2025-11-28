@@ -13,18 +13,21 @@ import OrderSummary from "../pages/OrderSummary";
 // Ruta protegida
 import RequireAuth from "../components/RequireAuth";
 
-// Recibe props del carrito desde App.jsx
-export default function AppRoutes({ cartItems, onAdd, onFinalize }) {
-return (
+import { useCart } from "../hooks/useCart"; // Importar el hook
+
+export default function AppRoutes() {
+  const { cartItems, clearCart } = useCart(); // Usar el hook para las rutas que lo necesiten
+
+  return (
     <Routes>
-    <Route path="/" element={<Home onAdd={onAdd} />} />
-    <Route path="/productos" element={<Products onAdd={onAdd} />} />
-    <Route path="/contacto" element={<Contacto />} />
-    <Route path="/login" element={<Login />} />
-    <Route path="/register" element={<Register />} />
-    <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
-    <Route path="/checkout" element={<Checkout cartItems={cartItems} onFinalize={onFinalize} />} />
-    <Route path="/order-summary" element={<OrderSummary />} />
+      <Route path="/" element={<Home />} />
+      <Route path="/productos" element={<Products />} />
+      <Route path="/contacto" element={<Contacto />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
+      <Route path="/checkout" element={<RequireAuth><Checkout cartItems={cartItems} onFinalize={clearCart} /></RequireAuth>} />
+      <Route path="/order-summary" element={<OrderSummary />} />
     </Routes>
-);
+  );
 }

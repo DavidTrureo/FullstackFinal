@@ -1,9 +1,11 @@
 import ProductCard from "../components/ProductCard";
 import { apiFetch } from "../services/api";
 import { useEffect, useState } from "react";
+import { useCart } from "../hooks/useCart"; // 1. Importar el hook
 
-export default function Products({ onAdd }) {
+export default function Products() { // 2. Eliminar la prop onAdd
   const [items, setItems] = useState([]);
+  const { addItem } = useCart(); // 3. Obtener addItem desde el contexto
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -40,7 +42,7 @@ export default function Products({ onAdd }) {
               description={p.description}
               price={p.price}
               color={p.color}
-              onAdd={() => onAdd?.(p)}
+              onAdd={() => addItem(p)} // 4. Usar la función del contexto directamente
             />
           ))}
         </div>
