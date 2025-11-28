@@ -64,7 +64,7 @@ export default function CartModal({
           {/* Header del modal */}
             <div className="modal-header">
             <h5 className="modal-title" id="cartModalLabel">Carrito de Compras</h5>
-            <button type="button" className="btn-close" aria-label="Cerrar" onClick={() => onClose?.()}></button>
+            <button type="button" className="btn-close btn-close-white" aria-label="Cerrar" onClick={() => onClose?.()}></button>
           </div>
 
           {/* Body del modal: listado de productos */}
