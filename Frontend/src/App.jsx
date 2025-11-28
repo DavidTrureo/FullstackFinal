@@ -12,7 +12,7 @@ import CartModal from "./components/CartModal";
 // Rutas modularizadas
 import AppRoutes from "./routes/AppRoutes";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "./context/authContext";
 import { useNavigate } from "react-router-dom";
 

@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 
 // 1. Crear el contexto
-export const CartContext = createContext();
+const CartContext = createContext();
 
 // 3. Crear el proveedor del contexto
 export function CartProvider({ children }) {
@@ -70,3 +70,6 @@ export function CartProvider({ children }) {
 
     return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
+
+// Exportamos el contexto aquí para que el hook pueda usarlo
+export { CartContext };
